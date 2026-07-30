@@ -1,0 +1,43 @@
+# ==========================================
+# Terraform & OpenTofu
+# ==========================================
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform/
+.terraform.lock.hcl
+.tfplan
+
+# ==========================================
+# VS Code & IDEs
+# ==========================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# ==========================================
+# Azure & Credentials / Environment Variables
+# ==========================================
+.env
+*.pem
+*.key
+*.pub
+*.pfx
+.azure/
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+.DS_Store
+Thumbs.db
