@@ -261,3 +261,78 @@ module "app_subnet_association" {
 
   route_table_id = module.app_route_table.id
 }
+
+module "web_nic" {
+
+  source = "../../modules/network-interface"
+
+  name                = "nic-web-01"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  subnet_id = module.web_subnet.id
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
+}
+
+module "web_vm" {
+
+  source = "../../modules/virtual-machine"
+
+  name                = "vm-web-01"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  size            = "Standard_DC1ds_v3"
+  priority        = "Spot"
+  eviction_policy = "Deallocate"
+  max_bid_price   = -1
+  zone            = "1"
+
+  network_interface_ids = [
+    module.web_nic.id
+  ]
+
+  admin_username = var.admin_username
+  public_key     = var.public_key
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
+
+  custom_data = base64encode(file("../../scripts/cloud-init/web-init.yaml"))
+}
+
+module "web_data_disk" {
+
+  source = "../../modules/managed-disk"
+
+  name                = "disk-web-data-01"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  disk_size_gb = 32
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
+}
+
+module "web_disk_attachment" {
+
+  source = "../../modules/disk-attachment"
+
+  managed_disk_id = module.web_data_disk.id
+
+  virtual_machine_id = module.web_vm.id
+
+  lun = 0
+}
