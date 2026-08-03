@@ -47,3 +47,15 @@ variable "max_bid_price" {
   description = "Maximum bid price for Spot VM (-1 for standard rate)"
   default     = -1
 }
+
+variable "sql_admin_username" {
+  type        = string
+  description = "Administrator username for the Azure MSSQL Server"
+  default     = "sqladmin"
+}
+
+variable "sql_admin_password" {
+  type        = string
+  description = "Administrator password for the Azure MSSQL Server"
+  sensitive   = true
+}

@@ -11,3 +11,8 @@ output "name" {
 output "address_space" {
   value = azurerm_virtual_network.this.address_space
 }
+
+output "virtual_network_id" {
+  description = "Virtual Network ID"
+  value       = azurerm_virtual_network.this.id
+}

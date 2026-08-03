@@ -22,3 +22,11 @@ variable "default_outbound_access_enabled" {
   type    = bool
   default = true
 }
+
+variable "private_endpoint_network_policies" {
+
+  type = string
+
+  default = "Enabled"
+
+}

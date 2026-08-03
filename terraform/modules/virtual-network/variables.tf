@@ -23,3 +23,11 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+##variable "virtual_network_id" {
+
+  ##description = "VNet ID for DNS link"
+
+  ##type = string
+
+##}

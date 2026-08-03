@@ -6,4 +6,6 @@ resource "azurerm_subnet" "this" {
   address_prefixes = var.address_prefixes
 
   default_outbound_access_enabled = var.default_outbound_access_enabled
-}
+  
+  private_endpoint_network_policies = var.private_endpoint_network_policies
+ }
