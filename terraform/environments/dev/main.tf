@@ -648,3 +648,82 @@ module "key_vault_private_dns_zone" {
   }
 
 }
+
+module "log_analytics" {
+
+  source = "../../modules/log-analytics"
+
+
+  name = "law-contoso-dev-001"
+
+
+  location = var.location
+
+
+  resource_group_name = module.resource_group.resource_group_name
+
+
+  tags = {
+    Environment = "dev"
+    Project     = "Contoso Financial Services"
+    ManagedBy   = "Terraform"
+  }
+
+}
+
+module "action_group" {
+
+  source = "../../modules/monitor-action-group"
+
+
+  name = "ag-contoso-dev-alerts"
+
+
+  resource_group_name = module.resource_group.resource_group_name
+
+
+  email_address = "lavanyayadav72@gmail.com"
+
+
+  tags = {
+
+    Environment = "dev"
+
+    ManagedBy = "Terraform"
+
+  }
+
+}
+
+module "vm_cpu_alert" {
+
+  source = "../../modules/monitor-alert"
+
+
+  name = "alert-vm-cpu-high"
+
+
+  resource_group_name = module.resource_group.resource_group_name
+
+
+  resource_id = module.web_vm.vm_id
+
+
+  action_group_id = module.action_group.id
+
+}
+
+module "keyvault_diagnostics" {
+
+  source = "../../modules/diagnostic-setting"
+
+
+  name = "diag-keyvault"
+
+
+  target_resource_id = module.key_vault.key_vault_id
+
+
+  workspace_id = module.log_analytics.id
+
+}

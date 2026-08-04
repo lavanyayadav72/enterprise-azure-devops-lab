@@ -34,8 +34,8 @@ output "sql_database_name" {
 
 output "private_endpoint_ip" {
 
-description = "Private endpoint IP address"
+  description = "Private endpoint IP address"
 
-value = azurerm_private_endpoint.sql.private_service_connection[0].private_ip_address
+  value = azurerm_private_endpoint.sql.private_service_connection[0].private_ip_address
 
 }

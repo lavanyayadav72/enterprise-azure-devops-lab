@@ -19,3 +19,11 @@ output "tenant_id" {
   description = "Managed Identity Tenant ID"
   value       = azurerm_linux_virtual_machine.this.identity[0].tenant_id
 }
+
+output "vm_id" {
+
+  description = "Virtual machine resource ID"
+
+  value = azurerm_linux_virtual_machine.this.id
+
+}

@@ -26,8 +26,8 @@ variable "tags" {
 
 ##variable "virtual_network_id" {
 
-  ##description = "VNet ID for DNS link"
+##description = "VNet ID for DNS link"
 
-  ##type = string
+##type = string
 
 ##}

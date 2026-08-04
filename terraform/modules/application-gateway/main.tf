@@ -40,7 +40,7 @@ resource "azurerm_application_gateway" "this" {
     tier     = "WAF_v2"
     capacity = var.capacity
   }
-  
+
   ssl_policy {
     policy_type = "Predefined"
     policy_name = "AppGwSslPolicy20220101"
@@ -92,12 +92,12 @@ resource "azurerm_application_gateway" "this" {
   }
 
   probe {
-    name                                       = local.probe_name
-    protocol                                   = var.frontend_protocol
-    host                                       = "127.0.0.1"
-    path                                       = var.probe_path
-    interval                                   = var.probe_interval
-    timeout                                    = var.probe_timeout
+    name                                      = local.probe_name
+    protocol                                  = var.frontend_protocol
+    host                                      = "127.0.0.1"
+    path                                      = var.probe_path
+    interval                                  = var.probe_interval
+    timeout                                   = var.probe_timeout
     unhealthy_threshold                       = var.probe_unhealthy_threshold
     pick_host_name_from_backend_http_settings = false
 
@@ -107,5 +107,5 @@ resource "azurerm_application_gateway" "this" {
   }
 
   tags = var.tags
- 
+
 }

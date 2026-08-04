@@ -3,7 +3,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   name                = var.name
   resource_group_name = var.resource_group_name
   location            = var.location
-  zone = var.zone
+  zone                = var.zone
 
   size = var.size
 
@@ -34,14 +34,14 @@ resource "azurerm_linux_virtual_machine" "this" {
     version   = "latest"
   }
 
-  tags = var.tags
+  tags        = var.tags
   custom_data = var.custom_data
 
   boot_diagnostics {
-  storage_account_uri = null
-}
+    storage_account_uri = null
+  }
   identity {
     type = "SystemAssigned"
-}
-  
+  }
+
 }
