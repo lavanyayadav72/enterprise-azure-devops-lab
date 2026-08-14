@@ -24,10 +24,3 @@ variable "tags" {
   default     = {}
 }
 
-##variable "virtual_network_id" {
-
-##description = "VNet ID for DNS link"
-
-##type = string
-
-##}

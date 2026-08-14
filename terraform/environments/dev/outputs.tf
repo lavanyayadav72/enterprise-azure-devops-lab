@@ -33,3 +33,7 @@ output "application_gateway_public_ip" {
 output "application_gateway_subnet_id" {
   value = module.appgateway_subnet.id
 }
+
+output "acr_login_server" {
+  value = module.container_registry.login_server
+}

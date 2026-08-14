@@ -1,0 +1,42 @@
+services:
+
+  api:
+    image: contoso-api:1.0.0
+    container_name: contoso-api
+
+    ports:
+      - "5000:5000"
+
+    environment:
+      APP_NAME: "Contoso Banking API"
+      APP_VERSION: "1.0.0"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+
+    depends_on:
+      redis:
+        condition: service_started
+
+    restart: unless-stopped
+
+    networks:
+      - contoso-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: contoso-redis
+
+    restart: unless-stopped
+
+    volumes:
+      - redis-data:/data
+
+    networks:
+      - contoso-network
+
+networks:
+  contoso-network:
+    driver: bridge
+
+volumes:
+  redis-data:

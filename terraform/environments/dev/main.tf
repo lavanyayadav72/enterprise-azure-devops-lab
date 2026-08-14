@@ -44,6 +44,18 @@ module "virtual_network" {
   }
 }
 
+module "gateway_subnet" {
+  source = "../../modules/subnet"
+
+  name                 = "GatewaySubnet"
+  resource_group_name  = module.resource_group.resource_group_name
+  virtual_network_name = module.virtual_network.name
+
+  address_prefixes = ["10.10.254.0/27"]
+
+  default_outbound_access_enabled = false
+}
+
 module "web_subnet" {
   source = "../../modules/subnet"
 
@@ -106,6 +118,96 @@ module "management_subnet" {
   default_outbound_access_enabled = false
 }
 
+module "bastion_subnet" {
+  source = "../../modules/subnet"
+
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = module.resource_group.resource_group_name
+  virtual_network_name = module.virtual_network.name
+
+  address_prefixes = ["10.10.11.0/26"]
+
+  default_outbound_access_enabled = false
+}
+
+module "bastion_public_ip" {
+  source = "../../modules/public-ip"
+
+  name                = "pip-bastion"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  allocation_method = "Static"
+  sku               = "Standard"
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
+}
+
+module "bastion" {
+  source = "../../modules/bastion"
+
+  name                = "bastion-contoso-dev"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  subnet_id            = module.bastion_subnet.id
+  public_ip_address_id = module.bastion_public_ip.id
+
+  sku = "Standard"
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
+}
+
+module "nat_gateway_public_ip" {
+  source = "../../modules/public-ip"
+
+  name                = "pip-nat"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  allocation_method = "Static"
+  sku               = "Standard"
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
+}
+
+module "nat_gateway" {
+  source = "../../modules/nat-gateway"
+
+  name                = "nat-contoso-dev"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  sku_name                = "Standard"
+  idle_timeout_in_minutes = 4
+
+  public_ip_address_id = module.nat_gateway_public_ip.id
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
+}
+
+module "web_subnet_nat_gateway_association" {
+  source = "../../modules/subnet-nat-gateway-association"
+
+  subnet_id      = module.web_subnet.id
+  nat_gateway_id = module.nat_gateway.id
+}
 module "app_nsg" {
   source = "../../modules/network-security-group"
 
@@ -726,4 +828,109 @@ module "keyvault_diagnostics" {
 
   workspace_id = module.log_analytics.id
 
+}
+
+module "storage_account" {
+
+  source = "../../modules/storage-account"
+
+  storage_account_name = "stcontosodev001"
+
+  resource_group_name = module.resource_group.resource_group_name
+
+  location = var.location
+
+  tags = {
+    Environment = "dev"
+    Project     = "Contoso Financial Services"
+    ManagedBy   = "Terraform"
+  }
+}
+
+module "app_data_container" {
+
+  source = "../../modules/storage-container"
+
+  name = "app-data"
+
+  storage_account_id = module.storage_account.id
+}
+
+module "shared_file_share" {
+
+  source = "../../modules/storage-file-share"
+
+  name = "shared-data"
+
+  storage_account_id = module.storage_account.id
+
+  quota = 100
+}
+
+module "storage_diagnostics" {
+
+  source = "../../modules/storage-diagnostic-setting"
+
+
+  name = "storage-diagnostics"
+
+
+  target_resource_id = module.storage_account.id
+
+
+  log_analytics_workspace_id = module.log_analytics.id
+
+}
+
+module "storage_alert_action_group" {
+
+  source = "../../modules/action-group"
+
+
+  name = "storage-alerts"
+
+
+  resource_group_name = module.resource_group.resource_group_name
+
+
+  short_name = "storalert"
+
+
+  email_receiver = "lavanyayadav72@example.com"
+
+}
+
+module "storage_alert" {
+
+  source = "../../modules/storage-alert"
+
+
+  name = "storage-availability-alert"
+
+
+  resource_group_name = module.resource_group.resource_group_name
+
+
+  storage_account_id = module.storage_account.id
+
+
+  action_group_id = module.storage_alert_action_group.id
+
+}
+
+module "container_registry" {
+  source = "../../modules/container-registry"
+
+  name                = "acrcontosodev001"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+
+  sku           = "Basic"
+  admin_enabled = false
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Application = "ContosoBanking"
+  }
 }
