@@ -27,4 +27,6 @@ jobs:
 
       - name: Run tests
         working-directory: maplebank-api
+        env:
+          PYTHONPATH: .
         run: pytest
