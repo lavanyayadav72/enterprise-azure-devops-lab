@@ -13,5 +13,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Run CI test
-        run: echo "CI pipeline is working!"
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        working-directory: maplebank-api
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run tests
+        working-directory: maplebank-api
+        run: pytest
